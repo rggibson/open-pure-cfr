@@ -1,0 +1,5 @@
+PROJECT: Open Pure CFR
+AUTHOR: Richard Gibson - richard.g.gibson@gmail.com
+
+This is an open implementation of Oskari Tammelin's Pure CFR. 
+It makes use of some of the project_acpc_server code used to run the Annual Computer Poker Competition.
