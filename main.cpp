@@ -19,7 +19,7 @@ int main( const int argc, const char *argv[] )
 {
   printf("Hello World!\n");
 
-  FILE *file = fopen( "project_acpc_server/holdem.limit.3p.game", "r" );
+  FILE *file = fopen( "games/holdem.limit.3p.game", "r" );
   Game *game = readGame( file );
   printGame( stdout, game );
   free( game );
