@@ -1026,8 +1026,8 @@ void doAction( const Game *game, const Action *action, State *state )
   }
 }
 
-static int rankHand( const Game *game, const State *state,
-		     const uint8_t player )
+int rankHand( const Game *game, const State *state,
+	      const uint8_t player )
 {
   int i;
   Cardset c = emptyCardset();

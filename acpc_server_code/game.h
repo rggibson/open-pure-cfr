@@ -187,6 +187,10 @@ uint8_t bcStart( const Game *game, const uint8_t round );
 /* get the total number of board cards dealt out after (zero based) round */
 uint8_t sumBoardCards( const Game *game, const uint8_t round );
 
+/* returns an int representing the rank of a hand, higher rank the better */
+int rankHand( const Game *game, const State *state,
+	      const uint8_t player );
+
 /* return the value of a finished hand for a player
    returns a double because pots may be split when players tie
    WILL HAVE UNDEFINED BEHAVIOUR IF HAND ISN'T FINISHED
