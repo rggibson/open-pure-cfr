@@ -34,9 +34,10 @@ TerminalNode2p::~TerminalNode2p( )
 {
 }
 
-int TerminalNode2p::evaluate( const hand_t *hand, const int position ) const
+int TerminalNode2p::evaluate( const hand_t &hand, const int position ) const
 {
-  return ( showdown ? hand->eval.showdown_value_2p[ position ] : fold_value[ position ] ) * money;
+  return ( showdown ? hand.eval.showdown_value_2p[ position ]
+	   : fold_value[ position ] ) * money;
 }
 
 InfoSetNode2p::InfoSetNode2p( const int64_t new_soln_idx,
@@ -71,19 +72,22 @@ TerminalNode3p::~TerminalNode3p( )
 {
 }
 
-int TerminalNode3p::evaluate( const hand_t *hand, const int position ) const
+int TerminalNode3p::evaluate( const hand_t &hand, const int position ) const
 {
-  return ( pot_size / hand->eval.pot_frac_recip[ position ][ leaf_type ] ) - money_spent[ position ];
+  return ( pot_size / hand.eval.pot_frac_recip[ position ][ leaf_type ] )
+    - money_spent[ position ];
 }
 
 InfoSetNode3p::InfoSetNode3p( const int64_t new_soln_idx,
 			      const int new_num_choices,
 			      const int8_t new_player,
 			      const int8_t new_round,
-			      const int8_t new_player_folded[ MAX_PURE_CFR_PLAYERS ],
+			      const int8_t new_player_folded
+			      [ MAX_PURE_CFR_PLAYERS ],
 			      const BettingNode *new_child,
 			      const uint32_t new_pot_size,
-			      const uint32_t new_money_spent[ MAX_PURE_CFR_PLAYERS ],
+			      const uint32_t new_money_spent
+			      [ MAX_PURE_CFR_PLAYERS ],
 			      const leaf_type_t new_leaf_type )
   : TerminalNode3p( new_pot_size, new_money_spent, new_leaf_type ),
     soln_idx( new_soln_idx ),
@@ -130,7 +134,7 @@ void get_term_values_3p( const State &state,
 
 BettingNode *init_betting_tree_r( State &state,
 				  const Game *game,
-				  const ActionAbstraction *acttion_abs,
+				  const ActionAbstraction *action_abs,
 				  size_t num_entries_per_bucket[ MAX_ROUNDS ] )
 {
   BettingNode *node;
@@ -140,7 +144,8 @@ BettingNode *init_betting_tree_r( State &state,
     switch( game->numPlayers ) {
       
     case 2: {
-      int8_t showdown = ( state.playerFolded[ 0 ] || state.playerFolded[ 1 ] ? 0 : 1 );
+      int8_t showdown = ( state.playerFolded[ 0 ]
+			  || state.playerFolded[ 1 ] ? 0 : 1 );
       int8_t fold_value[ 2 ];
       int money = -1;
       for( int p = 0; p < 2; ++p ) {
@@ -169,7 +174,8 @@ BettingNode *init_betting_tree_r( State &state,
     }
     
     default:
-      fprintf( stderr, "cannot initialize betting tree for %d-players\n", game->numPlayers );
+      fprintf( stderr, "cannot initialize betting tree for %d-players\n",
+	       game->numPlayers );
       assert( 0 );
     }
     

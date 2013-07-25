@@ -44,7 +44,7 @@ protected:
 		     const hand_t &hand,
 		     rng_state_t &rng );
 
-  const game *game;
+  Game *game;
   const CardAbstraction *card_abs;
   const ActionAbstraction *action_abs;
   

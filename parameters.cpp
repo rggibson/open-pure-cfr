@@ -26,9 +26,9 @@ Parameters::Parameters( )
   rng_seeds[ 3 ] = 28;
   num_threads = 1;
   status_freq_seconds = 60;
-  dump.seconds_start = INT_MAX;
-  dump.seconds_mult = 1;
-  dump.seconds_add = 0;
+  dump_timer.seconds_start = INT_MAX;
+  dump_timer.seconds_mult = 1;
+  dump_timer.seconds_add = 0;
   max_walltime_seconds = INT_MAX;
   do_average = true;
 }
@@ -175,17 +175,17 @@ int Parameters::parse( const int argc, const char *argv[] )
 	fprintf( stderr, "could not read checkpoint time from [%s]\n", argv[ index ] );
 	return 1;
       }
-      dump.seconds_start = time_string_to_seconds( temp[ 0 ] );
+      dump_timer.seconds_start = time_string_to_seconds( temp[ 0 ] );
       if( num_args > 1 ) {
-	dump.seconds_mult = time_string_to_seconds( temp[ 1 ] );
+	dump_timer.seconds_mult = time_string_to_seconds( temp[ 1 ] );
 	if( num_args > 2 ) {
-	  dump.seconds_add = time_string_to_seconds( temp[ 2 ] );
+	  dump_timer.seconds_add = time_string_to_seconds( temp[ 2 ] );
 	} else {
-	  dump.seconds_add = 0;
+	  dump_timer.seconds_add = 0;
 	}
       } else {
-	dump.seconds_mult = 1;
-	dump.seconds_add = dump.seconds_start;
+	dump_timer.seconds_mult = 1;
+	dump_timer.seconds_add = dump_timer.seconds_start;
       }
       
     } else if( !strncmp( argv[ index ], "--max-walltime=", strlen( "--max-walltime=" ) ) ) {
@@ -221,7 +221,8 @@ void Parameters::print_params( FILE *file ) const
   }
   fprintf( file, "NUM_THREADS %d\n", num_threads );
   fprintf( file, "STATUS_FREQ_SECONDS %d\n", status_freq_seconds );
-  fprintf( file, "DUMP_TIMER %d %d %d\n", dump.seconds_start, dump.seconds_mult, dump.seconds_add );
+  fprintf( file, "DUMP_TIMER %d %d %d\n", dump_timer.seconds_start,
+	   dump_timer.seconds_mult, dump_timer.seconds_add );
   fprintf( file, "MAX_WALLTIME_SECONDS %d\n", max_walltime_seconds );
   if( do_average ) {
     fprintf( file, "DO_AVERAGE TRUE\n" );

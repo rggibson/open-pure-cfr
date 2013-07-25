@@ -56,7 +56,7 @@ class Entries_der : public Entries {
 public:
   
   Entries_der( size_t new_num_entries_per_bucket,
-	       int new_total_num_entries,
+	       size_t new_total_num_entries,
 	       T *loaded_data = NULL );
   virtual ~Entries_der( );
 
@@ -69,7 +69,9 @@ public:
 			      const int num_choices,
 			      const int *values,
 			      const int retval );
-  virtual int increment_entry( const int bucket, const int64_t soln_idx, const int choice );
+  virtual int increment_entry( const int bucket,
+			       const int64_t soln_idx,
+			       const int choice );
 
   virtual int write( FILE *file ) const;
   virtual int load( FILE *file );
@@ -187,10 +189,10 @@ int Entries_der<T>::increment_entry( const int bucket, const int64_t soln_idx, c
 }
 
 template <typename T>
-int Entries_der<T>::dump( FILE *file ) const
+int Entries_der<T>::write( FILE *file ) const
 {
   if( data_was_loaded ) {
-    fprintf( stderr, "tried to dump data that was loaded at instantiation, "
+    fprintf( stderr, "tried to write data that was loaded at instantiation, "
 	     "which is not allowed\n" );
     return 1;
   }
@@ -206,7 +208,7 @@ int Entries_der<T>::dump( FILE *file ) const
   /* Dump entries */
   num_written = fwrite( entries, sizeof( T ), total_num_entries, file );
   if( num_written != total_num_entries ) {
-    fprintf( stderr, "error while dumping; only wrote %jd of %jd entries\n",
+    fprintf( stderr, "error while writing; only wrote %jd of %jd entries\n",
 	     ( intmax_t ) num_written, ( intmax_t ) total_num_entries );
     return 1;
   }  
@@ -265,7 +267,7 @@ pure_cfr_entry_type_t Entries_der<T>::get_entry_type( ) const
   } else {
     fprintf( stderr, "called get_entry_type for unrecognized template type!\n" );
     assert( 0 );
-    return TYPE_UNKNOWN;
+    return TYPE_NUM_TYPES;
   }
 }
 

@@ -26,6 +26,9 @@ const int MAX_ABSTRACT_ACTIONS = 4;
 /* Length of strings used for filenames */
 const int PATH_LENGTH = 1024;
 
+/* Number of iterations to run per thread before checking for pause or quit */
+const int ITERATION_BLOCK_SIZE = 1000;
+
 /* Enum of card abstraction types */
 typedef enum {
   CARD_ABS_NULL = 0,

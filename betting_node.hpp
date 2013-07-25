@@ -32,7 +32,8 @@ public:
   BettingNode( );
   virtual ~BettingNode( );
 
-  virtual int evaluate( const hand_t *hand, const int position ) const { assert( 0 ); }
+  virtual int evaluate( const hand_t &hand, const int position ) const
+  { assert( 0 ); }
 
   virtual int64_t get_soln_idx( ) const { assert( 0 ); }
   virtual int get_num_choices( ) const { assert( 0 ); }
@@ -54,7 +55,7 @@ public:
   TerminalNode2p( const bool new_showdown, const int8_t new_fold_value[ 2 ], const int new_money );
   virtual ~TerminalNode2p( );
 
-  virtual int evaluate( const hand_t *hand, const int position ) const;
+  virtual int evaluate( const hand_t &hand, const int position ) const;
 
   virtual BettingNode *get_child( ) const { return NULL; }
 
@@ -98,7 +99,7 @@ public:
 		  const leaf_type_t new_leaf_type );
   virtual ~TerminalNode3p( );
 
-  virtual int evaluate( const hand_t *hand, const int position ) const;
+  virtual int evaluate( const hand_t &hand, const int position ) const;
 
   virtual const BettingNode *get_child( ) const { return NULL; }
 
@@ -129,7 +130,8 @@ public:
   virtual int get_num_choices( ) const { return num_choices; }
   virtual int8_t get_player( ) const { return player; }
   virtual int8_t get_round( ) const { return round; }
-  virtual int8_t did_player_fold( const int position ) const { return player_folded[ position ]; }
+  virtual int8_t did_player_fold( const int position ) const
+  { return player_folded[ position ]; }
 
   virtual const BettingNode *get_child( ) const { return child; }
 

@@ -16,7 +16,7 @@ extern "C" {
 
 /* Pure CFR includes */
 #include "constants.hpp"
-#include "betting_node.hpp";
+#include "betting_node.hpp"
 
 /* Base class */
 class CardAbstraction {
@@ -29,6 +29,7 @@ public:
   virtual int get_bucket( const Game *game,
 			  const BettingNode *node,
 			  const hand_t &hand ) const = 0;
+  virtual bool can_precompute_buckets( ) const { return false; }
   virtual void precompute_buckets( const Game *game,
 				   hand_t &hand ) const;
 
@@ -54,6 +55,7 @@ public:
   virtual int get_bucket( const Game *game,
 			  const BettingNode *node,
 			  const hand_t &hand ) const;
+  virtual bool can_precompute_buckets( ) const { return true; }
   virtual void precompute_buckets( const Game *game,
 				   hand_t &hand ) const;
 
@@ -80,6 +82,7 @@ public:
   virtual int get_bucket( const Game *game,
 			  const BettingNode *node,
 			  const hand_t &hand ) const;
+  virtual bool can_precompute_buckets( ) const { return true; }
   virtual void precompute_buckets( const Game *game,
 				   hand_t &hand ) const;
 };

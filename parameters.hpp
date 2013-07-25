@@ -48,7 +48,7 @@ public:
   char load_dump_prefix[ PATH_LENGTH ];
   int num_threads;
   int status_freq_seconds;
-  output_timer_t dump;
+  output_timer_t dump_timer;
   int max_walltime_seconds;
   bool do_average;
 };

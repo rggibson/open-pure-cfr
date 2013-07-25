@@ -24,16 +24,15 @@ CardAbstraction::~CardAbstraction( )
 /* By default, assume cannot precompute buckets */
 void CardAbstraction::precompute_buckets( const Game *game, hand_t &hand ) const
 {
-  for( int p = 0; p < MAX_PURE_CFR_PLAYERS; ++p ) {
-    for( int r = 0; r < MAX_ROUNDS; ++r ) {
-      hand.precomputed_buckets[ p ][ r ] = -1;
-    }
-  }
+  fprintf( stderr, "precompute_buckets called for base "
+	   "card abstraction class!\n" );
+  assert( false );
 }
 
 void CardAbstraction::count_total_num_entries( const Game *game,
 					       const BettingNode *node,
-					       size_t total_num_entries[ MAX_ROUNDS ] ) const
+					       size_t total_num_entries
+					       [ MAX_ROUNDS ] ) const
 {
   const BettingNode *child = node->get_child( );
 
@@ -42,12 +41,15 @@ void CardAbstraction::count_total_num_entries( const Game *game,
     return;
   }
 
+  const int8_t round = node->get_round( );
+  const int num_choices = node->get_num_choices( );
+
   /* Update entries counts */
   const int buckets = num_buckets( game, node );
-  total_num_entries[ node->round ] += buckets * node->num_choices;
+  total_num_entries[ round ] += buckets * num_choices;
 
   /* Recurse */
-  for( int c = 0; c < node->num_choices; ++c ) {
+  for( int c = 0; c < num_choices; ++c ) {
     count_total_num_entries( game, child, total_num_entries );
     child = child->get_sibling( );
   }
@@ -89,7 +91,7 @@ int NullCardAbstraction::get_bucket( const Game *game,
 				     const BettingNode *node,
 				     const hand_t &hand ) const
 {
-  return get_bucket_internal( game, hand, node->get_player(), state.round );
+  return get_bucket_internal( game, hand, node->get_player(), node->get_round() );
 }
 
 void NullCardAbstraction::precompute_buckets( const Game *game,
