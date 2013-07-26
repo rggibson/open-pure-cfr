@@ -33,9 +33,10 @@ public:
   virtual void precompute_buckets( const Game *game,
 				   hand_t &hand ) const;
 
-  void count_total_num_entries( const Game *game,
-				const BettingNode *node,
-				size_t total_num_entries[ MAX_ROUNDS ] ) const;
+  void count_entries( const Game *game,
+		      const BettingNode *node,
+		      size_t num_entries_per_bucket[ MAX_ROUNDS ],
+		      size_t total_num_entries[ MAX_ROUNDS ] ) const;
 
 protected:
 };

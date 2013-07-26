@@ -21,78 +21,30 @@ extern "C" {
 #include "pure_cfr_machine.hpp"
 
 PureCfrMachine::PureCfrMachine( const Parameters &params )
-  : do_average( params.do_average )
+  : ag( params ),
+    do_average( params.do_average )
 {
-  /* Create Game */
-  FILE *file = fopen( params.game_file, "r" );
-  if( file == NULL ) {
-    fprintf( stderr, "failed to open game file [%s]\n", params.game_file );
-    exit( -1 );
-  }
-  game = readGame( file );
-  if( game == NULL ) {
-    fprintf( stderr, "failed to read game file [%s]\n", params.game_file );
-    exit( -1 );
-  }
-
   /* Check for problems */
-  if( do_average && game->numPlayers > 2 ) {
+  if( do_average && ag.game->numPlayers > 2 ) {
     fprintf( stderr, "Sorry, averaging not implemented for > 2 player games.  "
 	     "Use --no-average\n" );
     exit( -1 );
   }
 
-  /* Create action abstraction */
-  switch( params.action_abs_type ) {
-  case ACTION_ABS_NULL:
-    action_abs = new NullActionAbstraction( );
-    break;
-  case ACTION_ABS_FCPA:
-    action_abs = new FcpaActionAbstraction( );
-    break;
-  default:
-    fprintf( stderr, "PureCfrMachine constructor: "
-	     "Unrecognized action abstraction type [%s]\n",
-	     action_abs_type_to_str[ ( int ) params.action_abs_type ] );
-    exit( -1 );
-  }
-  
-  /* init num_entries_per_bucket to zero */
-  size_t num_entries_per_bucket[ MAX_ROUNDS ];
-  memset( num_entries_per_bucket, 0,
-	  MAX_ROUNDS * sizeof( num_entries_per_bucket[ 0 ] ) );
-
-  /* process betting tree */
-  State state;
-  initState( game, 0, &state );
-  betting_tree_root = init_betting_tree_r( state, game, action_abs,
-					   num_entries_per_bucket );
-
-  /* Create card abstraction */
-  switch( params.card_abs_type ) {
-  case CARD_ABS_NULL:
-    card_abs = new NullCardAbstraction( game );
-    break;
-  case CARD_ABS_BLIND:
-    card_abs = new BlindCardAbstraction( );
-    break;
-  default:
-    fprintf( stderr, "PureCfrMachine constructor: "
-	     "Unrecognized card abstraction type [%s]\n",
-	     card_abs_type_to_str[ ( int ) params.card_abs_type ] );
-    exit( -1 );
-  }
-
-  /* count up the total number of entries required per round to store regret,
+  /* count up the number of entries required per round to store regret,
    * avg_strategy
    */
+  size_t num_entries_per_bucket[ MAX_ROUNDS ];
   size_t total_num_entries[ MAX_ROUNDS ];
+  memset( num_entries_per_bucket, 0,
+	  MAX_ROUNDS * sizeof( num_entries_per_bucket[ 0 ] ) );
   memset( total_num_entries, 0, MAX_ROUNDS * sizeof( total_num_entries[ 0 ] ) );
-  card_abs->count_total_num_entries( game, betting_tree_root, total_num_entries );
+  ag.card_abs->count_entries( ag.game, ag.betting_tree_root,
+			      num_entries_per_bucket, total_num_entries );
   
   /* initialize regret and avg strategy */
   for( int r = 0; r < MAX_ROUNDS; ++r ) {
-    if( r < game->numRounds ) {
+    if( r < ag.game->numRounds ) {
 
       /* Regret */
       switch( REGRET_TYPES[ r ] ) {
@@ -162,26 +114,6 @@ PureCfrMachine::~PureCfrMachine( )
       avg_strategy[ r ] = NULL;
     }
   }
-  
-  if( card_abs != NULL ) {
-    delete card_abs;
-    card_abs = NULL;
-  }
-  
-  if( betting_tree_root != NULL ) {
-    destroy_betting_tree_r( betting_tree_root );
-    betting_tree_root = NULL;
-  }
-
-  if( action_abs != NULL ) {
-    delete action_abs;
-    action_abs = NULL;
-  }
-
-  if( game != NULL ) {
-    free( game );
-    game = NULL;
-  }
 }
 
 void PureCfrMachine::do_iteration( rng_state_t &rng )
@@ -191,8 +123,8 @@ void PureCfrMachine::do_iteration( rng_state_t &rng )
     fprintf( stderr, "Unable to generate hand.\n" );
     exit( -1 );
   }
-  for( int p = 0; p < game->numPlayers; ++p ) {
-    walk_pure_cfr( p, betting_tree_root, hand, rng );
+  for( int p = 0; p < ag.game->numPlayers; ++p ) {
+    walk_pure_cfr( p, ag.betting_tree_root, hand, rng );
   }
 }
 
@@ -213,7 +145,7 @@ int PureCfrMachine::write_dump( const char *dump_prefix,
     }
 
     /* Dump regrets */
-    for( int r = 0; r < game->numRounds; ++r ) {
+    for( int r = 0; r < ag.game->numRounds; ++r ) {
       if( regrets[ r ]->write( file ) ) {
 	fprintf( stderr, "Error while dumping round %d to file [%s]\n",
 		 r, filename );
@@ -238,7 +170,7 @@ int PureCfrMachine::write_dump( const char *dump_prefix,
       return 1;
     }
 
-    for( int r = 0; r < game->numRounds; ++r ) {
+    for( int r = 0; r < ag.game->numRounds; ++r ) {
       if( avg_strategy[ r ]->write( file ) ) {
 	return 1;
       }
@@ -266,7 +198,7 @@ int PureCfrMachine::load_dump( const char *dump_prefix )
   }
 
   /* Load regrets */
-  for( int r = 0; r < game->numRounds; ++r ) {
+  for( int r = 0; r < ag.game->numRounds; ++r ) {
 
     if( regrets[ r ]->load( file ) ) {
       fprintf( stderr, "failed to load dump file [%s] for round %d\n",
@@ -290,7 +222,7 @@ int PureCfrMachine::load_dump( const char *dump_prefix )
     }
 
     /* Load avg strategy */
-    for( int r = 0; r < game->numRounds; ++r ) {
+    for( int r = 0; r < ag.game->numRounds; ++r ) {
 	  
       if( avg_strategy[ r ]->load( file ) ) {
 	fprintf( stderr, "failed to load dump file [%s] for round %d\n",
@@ -309,7 +241,7 @@ int PureCfrMachine::generate_hand( hand_t &hand, rng_state_t &rng )
 {
   /* First, deal out the cards and copy them over */
   State state;
-  dealCards( game, &rng, &state );
+  dealCards( ag.game, &rng, &state );
   memcpy( hand.boardCards, state.boardCards,
 	  MAX_BOARD_CARDS * sizeof( hand.boardCards[ 0 ] ) );
   for( int p = 0; p < MAX_PURE_CFR_PLAYERS; ++p ) {
@@ -318,16 +250,16 @@ int PureCfrMachine::generate_hand( hand_t &hand, rng_state_t &rng )
   }
 
   /* Bucket the hands for each player, round if possible */
-  if( card_abs->can_precompute_buckets( ) ) {
-    card_abs->precompute_buckets( game, hand );
+  if( ag.card_abs->can_precompute_buckets( ) ) {
+    ag.card_abs->precompute_buckets( ag.game, hand );
   }
 
   /* Rank the hands */
   int ranks[ MAX_PURE_CFR_PLAYERS ];
   int top_rank = -1;
   int num_ties = 1;;
-  for( int p = 0; p < game->numPlayers; ++p ) {
-    ranks[ p ] = rankHand( game, &state, p );
+  for( int p = 0; p < ag.game->numPlayers; ++p ) {
+    ranks[ p ] = rankHand( ag.game, &state, p );
     if( ranks[ p ] > top_rank ) {
       top_rank = ranks[ p ];
       num_ties = 1;
@@ -337,7 +269,7 @@ int PureCfrMachine::generate_hand( hand_t &hand, rng_state_t &rng )
   }
 
   /* Set evaluation values */
-  switch( game->numPlayers ) {
+  switch( ag.game->numPlayers ) {
   case 2:
     if( ranks[ 0 ] > ranks[ 1 ] ) {
       /* Player 0 wins in showdown */
@@ -409,7 +341,7 @@ int PureCfrMachine::generate_hand( hand_t &hand, rng_state_t &rng )
       hand.eval.pot_frac_recip[ 2 ][ LEAF_P1_P2 ] = 2; 
     }
     /* No players fold */
-    for( int p = 0; p < game->numPlayers; ++p ) {
+    for( int p = 0; p < ag.game->numPlayers; ++p ) {
       if( ranks[ p ] == top_rank ) {
 	hand.eval.pot_frac_recip[ p ][ LEAF_P0_P1_P2 ] = num_ties;
       } else {
@@ -420,7 +352,7 @@ int PureCfrMachine::generate_hand( hand_t &hand, rng_state_t &rng )
 
   default:
     fprintf( stderr, "can't set terminal pot fraction denominators in "
-	     "%d-player game\n", game->numPlayers );
+	     "%d-player game\n", ag.game->numPlayers );
     return 1;
   }
 
@@ -449,10 +381,10 @@ int PureCfrMachine::walk_pure_cfr( const int position,
   int8_t round = cur_node->get_round( );
   int64_t soln_idx = cur_node->get_soln_idx( );
   int bucket;
-  if( card_abs->can_precompute_buckets( ) ) {
+  if( ag.card_abs->can_precompute_buckets( ) ) {
     bucket = hand.precomputed_buckets[ player ][ round ];
   } else {
-    bucket = card_abs->get_bucket( game, cur_node, hand );
+    bucket = ag.card_abs->get_bucket( ag.game, cur_node, hand );
   }
 
   /* Get the positive regrets at this information set */

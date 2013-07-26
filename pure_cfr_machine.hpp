@@ -3,6 +3,7 @@
 
 /* pure_cfr_machine.hpp
  * Richard Gibson, Jun 28, 2013
+ * Email: richard.g.gibson@gmail.com
  *
  * Stores regrets + average strategy for all players, stores the betting tree
  * and constains Pure CFR iterations routine.
@@ -12,18 +13,15 @@
 
 /* project_acpc_server includes */
 extern "C" {
-#include "acpc_server_code/game.h"
 #include "acpc_server_code/rng.h"
 }
 
 /* Pure CFR includes */
 #include "parameters.hpp"
-#include "betting_node.hpp"
 #include "entries.hpp"
 #include "constants.hpp"
-#include "card_abstraction.hpp"
-#include "action_abstraction.hpp"
 #include "hand.hpp"
+#include "abstract_game.hpp"
 
 class PureCfrMachine {
 public:
@@ -44,12 +42,7 @@ protected:
 		     const hand_t &hand,
 		     rng_state_t &rng );
 
-  Game *game;
-  const CardAbstraction *card_abs;
-  const ActionAbstraction *action_abs;
-  
-  BettingNode *betting_tree_root;
-
+  AbstractGame ag;
   const bool do_average;
   Entries *regrets[ MAX_ROUNDS ];
   Entries *avg_strategy[ MAX_ROUNDS ];

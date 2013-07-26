@@ -29,10 +29,11 @@ void CardAbstraction::precompute_buckets( const Game *game, hand_t &hand ) const
   assert( false );
 }
 
-void CardAbstraction::count_total_num_entries( const Game *game,
-					       const BettingNode *node,
-					       size_t total_num_entries
-					       [ MAX_ROUNDS ] ) const
+void CardAbstraction::count_entries( const Game *game,
+				     const BettingNode *node,
+				     size_t num_entries_per_bucket[ MAX_ROUNDS ],
+				     size_t total_num_entries
+				     [ MAX_ROUNDS ] ) const
 {
   const BettingNode *child = node->get_child( );
 
@@ -45,12 +46,13 @@ void CardAbstraction::count_total_num_entries( const Game *game,
   const int num_choices = node->get_num_choices( );
 
   /* Update entries counts */
+  num_entries_per_bucket[ round ] += num_choices;
   const int buckets = num_buckets( game, node );
   total_num_entries[ round ] += buckets * num_choices;
 
   /* Recurse */
   for( int c = 0; c < num_choices; ++c ) {
-    count_total_num_entries( game, child, total_num_entries );
+    count_entries( game, child, num_entries_per_bucket, total_num_entries );
     child = child->get_sibling( );
   }
 }
