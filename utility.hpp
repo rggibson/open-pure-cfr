@@ -18,5 +18,7 @@ int strtoint64_units(const char *ptr, int64_t &retval);
 void int64tostr_units( int64_t val, char *ptr, int n );
 int time_string_to_seconds( const char *str );
 void time_seconds_to_string( int seconds, char *str, int strlen );
+/* Returns 0 on success, 1 on failure */
+int get_next_token( char out[ PATH_LENGTH ], const char *str );
 
 #endif

@@ -9,6 +9,7 @@
 #include <string.h>
 #include <limits.h>
 #include <time.h>
+#include <ctype.h>
 
 /* Pure CFR includes */
 #include "parameters.hpp"
@@ -44,6 +45,7 @@ void Parameters::print_usage( const char *prog_name ) const
 			  PATH_LENGTH );
   fprintf( stderr, "Usage: %s <game> <output_prefix> [options]\n", prog_name );
   fprintf( stderr, "Options:\n" );
+  fprintf( stderr, "  --config=<file> (specify options from file)\n" );
   fprintf( stderr, "  --rng=<seed1:seed2:seed3:seed4|TIME>  "
 	   "(default: %d:%d:%d:%d)\n",
 	   rng_seeds[ 0 ], rng_seeds[ 1 ], rng_seeds[ 2 ], rng_seeds[ 3 ] );
@@ -93,8 +95,23 @@ int Parameters::parse( const int argc, const char *argv[] )
   /* optional parameters */
   bool rng_set = false;
   for( ; index < argc; ++index ) {
-    
-    if( !strncmp( argv[ index ], "--rng=", strlen( "--rng=" ) ) ) {
+
+    if( !strncmp( argv[ index ], "--config=", strlen( "--config=" ) ) ) {
+      const char *config_filename = &argv[ index ][ strlen( "--config=" ) ];
+      FILE *file = fopen( config_filename, "r" );
+      if( file == NULL ) {
+	fprintf( stderr, "Could not open options config file [%s]\n",
+		 config_filename );
+	return 1;
+      }
+      if( read_params( file ) ) {
+	fprintf( stderr, "Error reading parameters from file [%s]\n",
+		 config_filename );
+	return 1;
+      }
+      fclose( file );
+      
+    } else if( !strncmp( argv[ index ], "--rng=", strlen( "--rng=" ) ) ) {
       if( strcmp( &argv[ index ][ strlen( "--rng=" ) ], "TIME" ) == 0 ) {
 	for( int j = 0; j < 4; ++j ) {
 	  rng_seeds[ j ] = time( NULL ) + 4*j + 1;
@@ -228,5 +245,167 @@ void Parameters::print_params( FILE *file ) const
     fprintf( file, "DO_AVERAGE TRUE\n" );
   } else {
     fprintf( file, "DO_AVERAGE FALSE\n" );
+  }
+  fprintf( file, "PARAMETERS_END\n" );
+}
+
+int Parameters::read_params( FILE *file )
+{
+  char line[ PATH_LENGTH ];
+
+  while( fgets( line, PATH_LENGTH, file ) ) {
+
+    /* Ignore comments and blank lines */
+    if( ( line[ 0 ] == '#' ) || ( line[ 0 ] == '\n' ) ) {
+      continue;
+    }
+
+    if( !strncmp( line, "PARAMETERS_END", strlen( "PARAMETERS_END" ) ) ) {
+      /* End of parameters */
+      break;
+      
+    } else if( !strncmp( line, "GAME_FILE", strlen( "GAME_FILE" ) ) ) {
+      if( get_next_token( game_file, &line[ strlen( "GAME_FILE" ) ] ) ) {
+	fprintf( stderr, "Error reading GAME_FILE from line [%s]\n", line );
+	return 1;
+      }
+      
+    } else if( !strncmp( line, "OUTPUT_PREFIX", strlen( "OUTPUT_PREFIX" ) ) ) {
+      if( get_next_token( output_prefix, &line[ strlen( "OUTPUT_PREFIX" ) ] ) ) {
+	fprintf( stderr, "Error reading OUTPUT_PREFIX from line [%s]\n", line );
+	return 1;
+      }
+      
+    } else if( !strncmp( line, "RNG_SEEDS", strlen( "RNG_SEEDS" ) ) ) {
+      /* Skip whitespace */
+      int i = strlen( "RNG_SEEDS" );
+      while( isspace( line[ i ] ) || line[ i ] == '=' ) {
+	++i;
+      }
+      if( sscanf( &line[ i ], "%zu %zu %zu %zu", &rng_seeds[ 0 ], &rng_seeds[ 1 ],
+		  &rng_seeds[ 2 ], &rng_seeds[ 3 ] ) < 4 ) {
+	fprintf( stderr, "Error reading 4 RNG_SEEDS from line [%s]\n", line );
+	return 1;
+      }
+      
+    } else if( !strncmp( line, "CARD_ABSTRACTION",
+			 strlen( "CARD_ABSTRACTION" ) ) ) {
+      char card_abs_str[ PATH_LENGTH ];
+      if( get_next_token( card_abs_str,
+			  &line[ strlen( "CARD_ABSTRACTION" ) ] ) ) {
+	fprintf( stderr, "Error reading CARD_ABSTRACTION from line [%s]\n",
+		 line );
+	return 1;
+      }
+      int i;
+      for( i = 0; i < NUM_CARD_ABS_TYPES; ++i ) {
+	if( !strcmp( card_abs_str, card_abs_type_to_str[ i ] ) ) {
+	  break;
+	}
+      } 
+      card_abs_type = ( card_abs_type_t ) i;
+      if( card_abs_type == NUM_CARD_ABS_TYPES ) {
+	fprintf( stderr, "Unrecognized card abstraction type from line [%s]\n",
+		 line );
+	return 1;
+      }
+      
+    } else if( !strncmp( line, "ACTION_ABSTRACTION",
+			 strlen( "ACTION_ABSTRACTION" ) ) ) { 
+      char action_abs_str[ PATH_LENGTH ];
+      if( get_next_token( action_abs_str,
+			  &line[ strlen( "ACTION_ABSTRACTION" ) ] ) ) {
+	fprintf( stderr, "Error reading ACTION_ABSTRACTION from line [%s]\n",
+		 line );
+	return 1;
+      }
+      int i;
+      for( i = 0; i < NUM_ACTION_ABS_TYPES; ++i ) {
+	if( !strcmp( action_abs_str, action_abs_type_to_str[ i ] ) ) {
+	  break;
+	}
+      }
+      action_abs_type = ( action_abs_type_t ) i;
+      if( action_abs_type == NUM_ACTION_ABS_TYPES ) {
+	fprintf( stderr, "Unrecognized action abstraction type from line [%s]\n",
+		 line );
+	return 1;
+      }
+      
+    } else if( !strncmp( line, "LOAD_DUMP_PREFIX",
+			 strlen( "LOAD_DUMP_PREFIX" ) ) ) {
+      load_dump = true;
+      if( get_next_token( load_dump_prefix,
+			  &line[ strlen( "LOAD_DUMP_PREFIX" ) ] ) ) {
+	fprintf( stderr, "Error reading LOAD_DUMP_PREFIX from line [%s]\n",
+		 line );
+	return 1;
+      }
+      
+    } else if( !strncmp( line, "NUM_THREADS", strlen( "NUM_THREADS" ) ) ) {
+      /* Skip whitespace */
+      int i = strlen( "NUM_THREADS" );
+      while( isspace( line[ i ] ) || line[ i ] == '=' ) {
+	++i;
+      }
+      if( sscanf( &line[ i ], "%d", &num_threads ) < 1 ) {
+	fprintf( stderr, "Error reading NUM_THREADS from line [%s]\n", line );
+	return 1;
+      }
+      
+    } else if( !strncmp( line, "STATUS_FREQ_SECONDS",
+			 strlen( "STATUS_FREQ_SECONDS" ) ) ) {
+      /* Skip whitespace */
+      int i = strlen( "STATUS_FREQ_SECONDS" );
+      while( isspace( line[ i ] ) || line[ i ] == '=' ) {
+	++i;
+      }
+      if( sscanf( &line[ i ], "%d", &status_freq_seconds ) < 1 ) {
+	fprintf( stderr, "Error reading STATUS_FREQ_SECONDS from line [%s]\n",
+		 line );
+	return 1;
+      }
+      
+    } else if( !strncmp( line, "DUMP_TIMER", strlen( "DUMP_TIMER" ) ) ) {
+      /* Skip whitespace */
+      int i = strlen( "DUMP_TIMER" );
+      while( isspace( line[ i ] ) || line[ i ] == '=' ) {
+	++i;
+      }
+      if( sscanf( &line[ i ], "%d %d %d", &dump_timer.seconds_start,
+		  &dump_timer.seconds_mult, &dump_timer.seconds_add ) < 3 ) {
+	fprintf( stderr, "Error reading DUMP_TIMER from line [%s]\n", line );
+	return 1;
+      }
+
+    } else if( !strncmp( line, "MAX_WALLTIME_SECONDS",
+			 strlen( "MAX_WALLTIME_SECONDS" ) ) ) {
+      /* Skip whitespace */
+      int i = strlen( "MAX_WALLTIME_SECONDS" );
+      while( isspace( line[ i ] ) || line[ i ] == '=' ) {
+	++i;
+      }
+      if( sscanf( &line[ i ], "%d", &max_walltime_seconds ) < 1 ) {
+	fprintf( stderr, "Error reading MAX_WALLTIME_SECONDS from line [%s]\n",
+		 line );
+	return 1;
+      }
+
+    } else if( !strncmp( line, "DO_AVERAGE", strlen( "DO_AVERAGE" ) ) ) {
+      char tmp[ PATH_LENGTH ];
+      if( get_next_token( tmp, &line[ strlen( "DO_AVERAGE" ) ] ) ) {
+	fprintf( stderr, "Error reading DO_AVERAGE from line [%s]\n", line );
+	return 1;
+      }
+      if( !strcmp( tmp, "TRUE" ) ) {
+	do_average = true;
+      } else if( !strcmp( tmp, "FALSE" ) ) {
+	do_average = false;
+      } else {
+	fprintf( stderr, "Unknown DO_AVERAGE type, must be either TRUE or "
+		 "FALSE, received [%s] from line [%s]\n", tmp, line );
+	return 1;
+      }
+    }
   }
 }

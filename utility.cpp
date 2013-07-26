@@ -8,6 +8,7 @@
 /* C / C++ / STL includes */
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 /* Pure CFR includes */
 #include "utility.hpp"
@@ -128,4 +129,26 @@ void time_seconds_to_string( int time, char *str, int strlen )
   } else {
     snprintf(str, strlen, "0 seconds");
   }
+}
+
+int get_next_token( char out[ PATH_LENGTH ], const char *str )
+{
+  /* Skip whitespace */
+  int i = 0;
+  while( isspace( str[ i ] ) || ( str[ i ] == '=' ) ) {
+    ++i;
+  }
+  /* Find next whitespace */
+  int t = i + 1;
+  while( !isspace( str[ t ] ) && ( str[ t ] != '\0' ) ) {
+    ++t;
+  }
+  /* Copy the filename */
+  strncpy( out, &str[ i ], PATH_LENGTH );
+  if( t - i >= PATH_LENGTH ) {
+    return 1;
+  }
+  out[ t - i ] = '\0';
+
+  return 0;
 }

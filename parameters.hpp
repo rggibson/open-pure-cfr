@@ -35,6 +35,7 @@ public:
   void print_usage( const char *prog_name ) const;
   int parse( const int argc, const char *argv[] );
   void print_params( FILE *file ) const;
+  int read_params( FILE *file );
 
   /* Required parameters */
   char game_file[ PATH_LENGTH ];

@@ -362,73 +362,7 @@ int main( const int argc, const char *argv[] )
   
   /* Turn control over to the main loop */
   run_iterations( params, pcm );
-
   
-  /* TEST CODE BELOW */
-  // rng_state_t rng;
-  // init_by_array( &rng, params.rng_seeds, 4 );
-
-  // pcm.load_dump( params.output_prefix );
-  // pcm.do_iteration( rng );
-  
-  // FILE *file = fopen( params.game_file, "r" );
-  // Game *game = readGame( file );
-  // fclose( file );
-
-  // Abstraction abs( params.card_abs_type, params.action_abs_type, game );
-
-  // size_t num_entries_per_bucket[ MAX_ROUNDS ];
-  // size_t total_num_entries[ MAX_ROUNDS ];
-  // memset( num_entries_per_bucket, 0, MAX_ROUNDS * sizeof( size_t ) );
-  // memset( total_num_entries, 0, MAX_ROUNDS * sizeof( size_t ) );
-
-  // State state;
-  // initState( game, 0, &state );
-
-  // BettingNode *root = init_betting_tree_r( state,
-  // 					   game,
-  // 					   abs,
-  // 					   num_entries_per_bucket,
-  // 					   total_num_entries );
-
-  // fprintf( stderr, "NUM_ENTRIES" );
-  // for( int r = 0; r < MAX_ROUNDS; ++r ) {
-  //   fprintf( stderr, " %jd", num_entries_per_bucket[ r ] );
-  // }
-  // fprintf( stderr, "\n" );
-
-  // const BettingNode *cur = root;
-  // fprintf( stderr, "soln_idx %jd\n", cur->get_soln_idx() );
-  // fprintf( stderr, "num_choices %d\n", cur->get_num_choices() );
-  // fprintf( stderr, "player %d\n", cur->get_player() );
-  // fprintf( stderr, "round %d\n\n", cur->get_round() );
-
-  // cur = cur->get_child();
-  // cur = cur->get_sibling();
-  // fprintf( stderr, "soln_idx %jd\n", cur->get_soln_idx() );
-  // fprintf( stderr, "num_choices %d\n", cur->get_num_choices() );
-  // fprintf( stderr, "player %d\n", cur->get_player() );
-  // fprintf( stderr, "round %d\n\n", cur->get_round() );
-
-  // cur = cur->get_child();
-  // fprintf( stderr, "soln_idx %jd\n", cur->get_soln_idx() );
-  // fprintf( stderr, "num_choices %d\n", cur->get_num_choices() );
-  // fprintf( stderr, "player %d\n", cur->get_player() );
-  // fprintf( stderr, "round %d\n\n", cur->get_round() );
-
-  // cur = cur->get_child();
-  // fprintf( stderr, "soln_idx %jd\n", cur->get_soln_idx() );
-  // fprintf( stderr, "num_choices %d\n", cur->get_num_choices() );
-  // fprintf( stderr, "player %d\n", cur->get_player() );
-  // fprintf( stderr, "round %d\n\n", cur->get_round() );
-
-  // cur = cur->get_child();
-  // cur = cur->get_sibling();
-  // fprintf( stderr, "soln_idx %jd\n", cur->get_soln_idx() );
-  // fprintf( stderr, "num_choices %d\n", cur->get_num_choices() );
-  // fprintf( stderr, "player %d\n", cur->get_player() );
-  // fprintf( stderr, "round %d\n\n", cur->get_round() );
-
   /* Done! */
   return 0;
 }
