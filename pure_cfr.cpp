@@ -1,8 +1,9 @@
-/* main.cpp
+/* pure_cfr.cpp
  * Richard Gibson, Jun 27, 2013
  * Email: richard.g.gibson@gmail.com
  *
- * Entry point into Pure CFR that spawns worker threads to run pure cfr iterations.
+ * Entry point into Pure CFR that spawns worker threads to run
+ * Pure CFR iterations.
  */
 
 /* C / C++ includes */
