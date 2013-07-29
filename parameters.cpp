@@ -113,8 +113,8 @@ int Parameters::parse( const int argc, const char *argv[] )
       
     } else if( !strncmp( argv[ index ], "--rng=", strlen( "--rng=" ) ) ) {
       if( strcmp( &argv[ index ][ strlen( "--rng=" ) ], "TIME" ) == 0 ) {
-	for( int j = 0; j < 4; ++j ) {
-	  rng_seeds[ j ] = time( NULL ) + 4*j + 1;
+	for( int j = 0; j < NUM_RNG_SEEDS; ++j ) {
+	  rng_seeds[ j ] = time( NULL ) + 4*NUM_RNG_SEEDS + 1;
 	}
       } else if( sscanf( &argv[ index ][ strlen( "--rng=" ) ], "%d:%d:%d:%d",
 			 &rng_seeds[ 0 ], &rng_seeds[ 1 ],

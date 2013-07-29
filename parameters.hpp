@@ -21,6 +21,8 @@ extern "C" {
 /* Pure CFR includes */
 #include "constants.hpp"
 
+const int NUM_RNG_SEEDS = 4;
+
 typedef struct {
   int seconds_start;
   int seconds_mult;
@@ -42,7 +44,7 @@ public:
   char output_prefix[ PATH_LENGTH ];
 
   /* Optional parameters */
-  uint32_t rng_seeds[ 4 ];
+  uint32_t rng_seeds[ NUM_RNG_SEEDS ];
   card_abs_type_t card_abs_type;
   action_abs_type_t action_abs_type;
   bool load_dump;

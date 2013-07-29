@@ -27,12 +27,21 @@ public:
   AbstractGame( const Parameters &params );
   ~AbstractGame( );
 
+  void count_entries( size_t num_entries_per_bucket[ MAX_ROUNDS ],
+		      size_t total_num_entries[ MAX_ROUNDS ] ) const;
+
   Game *game;
 
   const CardAbstraction *card_abs;
   const ActionAbstraction *action_abs;
   
   BettingNode *betting_tree_root;
+
+protected:
+
+  void count_entries_r( const BettingNode *node,
+			size_t num_entries_per_bucket[ MAX_ROUNDS ],
+			size_t total_num_entries[ MAX_ROUNDS ] ) const;
 };
 
 #endif

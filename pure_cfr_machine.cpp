@@ -39,8 +39,7 @@ PureCfrMachine::PureCfrMachine( const Parameters &params )
   memset( num_entries_per_bucket, 0,
 	  MAX_ROUNDS * sizeof( num_entries_per_bucket[ 0 ] ) );
   memset( total_num_entries, 0, MAX_ROUNDS * sizeof( total_num_entries[ 0 ] ) );
-  ag.card_abs->count_entries( ag.game, ag.betting_tree_root,
-			      num_entries_per_bucket, total_num_entries );
+  ag.count_entries( num_entries_per_bucket, total_num_entries );
   
   /* initialize regret and avg strategy */
   for( int r = 0; r < MAX_ROUNDS; ++r ) {
@@ -242,11 +241,11 @@ int PureCfrMachine::generate_hand( hand_t &hand, rng_state_t &rng )
   /* First, deal out the cards and copy them over */
   State state;
   dealCards( ag.game, &rng, &state );
-  memcpy( hand.boardCards, state.boardCards,
-	  MAX_BOARD_CARDS * sizeof( hand.boardCards[ 0 ] ) );
+  memcpy( hand.board_cards, state.boardCards,
+	  MAX_BOARD_CARDS * sizeof( hand.board_cards[ 0 ] ) );
   for( int p = 0; p < MAX_PURE_CFR_PLAYERS; ++p ) {
-    memcpy( hand.holeCards[ p ], state.holeCards[ p ],
-	    MAX_HOLE_CARDS * sizeof( hand.holeCards[ 0 ] ) );
+    memcpy( hand.hole_cards[ p ], state.holeCards[ p ],
+	    MAX_HOLE_CARDS * sizeof( hand.hole_cards[ 0 ] ) );
   }
 
   /* Bucket the hands for each player, round if possible */
@@ -384,7 +383,8 @@ int PureCfrMachine::walk_pure_cfr( const int position,
   if( ag.card_abs->can_precompute_buckets( ) ) {
     bucket = hand.precomputed_buckets[ player ][ round ];
   } else {
-    bucket = ag.card_abs->get_bucket( ag.game, cur_node, hand );
+    bucket = ag.card_abs->get_bucket( ag.game, cur_node, hand.board_cards,
+				      hand.hole_cards );
   }
 
   /* Get the positive regrets at this information set */

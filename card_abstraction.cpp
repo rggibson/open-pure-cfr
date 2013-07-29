@@ -29,34 +29,6 @@ void CardAbstraction::precompute_buckets( const Game *game, hand_t &hand ) const
   assert( false );
 }
 
-void CardAbstraction::count_entries( const Game *game,
-				     const BettingNode *node,
-				     size_t num_entries_per_bucket[ MAX_ROUNDS ],
-				     size_t total_num_entries
-				     [ MAX_ROUNDS ] ) const
-{
-  const BettingNode *child = node->get_child( );
-
-  if( child == NULL ) {
-    /* Terminal node */
-    return;
-  }
-
-  const int8_t round = node->get_round( );
-  const int num_choices = node->get_num_choices( );
-
-  /* Update entries counts */
-  num_entries_per_bucket[ round ] += num_choices;
-  const int buckets = num_buckets( game, node );
-  total_num_entries[ round ] += buckets * num_choices;
-
-  /* Recurse */
-  for( int c = 0; c < num_choices; ++c ) {
-    count_entries( game, child, num_entries_per_bucket, total_num_entries );
-    child = child->get_sibling( );
-  }
-}
-
 NullCardAbstraction::NullCardAbstraction( const Game *game )
   : deck_size( game->numSuits * game->numRanks )
 {
@@ -91,9 +63,13 @@ int NullCardAbstraction::num_buckets( const Game *game,
 
 int NullCardAbstraction::get_bucket( const Game *game,
 				     const BettingNode *node,
-				     const hand_t &hand ) const
+				     const uint8_t board_cards[ MAX_BOARD_CARDS ],
+				     const uint8_t hole_cards
+				     [ MAX_PURE_CFR_PLAYERS ]
+				     [ MAX_HOLE_CARDS ] ) const
 {
-  return get_bucket_internal( game, hand, node->get_player(), node->get_round() );
+  return get_bucket_internal( game, board_cards, hole_cards,
+			      node->get_player(), node->get_round() );
 }
 
 void NullCardAbstraction::precompute_buckets( const Game *game,
@@ -101,13 +77,20 @@ void NullCardAbstraction::precompute_buckets( const Game *game,
 {
   for( int p = 0; p < game->numPlayers; ++p ) {
     for( int r = 0; r < game->numRounds; ++r ) {
-      hand.precomputed_buckets[ p ][ r ] = get_bucket_internal( game, hand, p, r );
+      hand.precomputed_buckets[ p ][ r ] = get_bucket_internal( game,
+								hand.board_cards,
+								hand.hole_cards,
+								p, r );
     }
   }
 }
 
 int NullCardAbstraction::get_bucket_internal( const Game *game,
-					      const hand_t &hand,
+					      const uint8_t board_cards
+					      [ MAX_BOARD_CARDS ],
+					      const uint8_t hole_cards
+					      [ MAX_PURE_CFR_PLAYERS ]
+					      [ MAX_HOLE_CARDS ],
 					      const int player,
 					      const int round ) const
 {
@@ -117,12 +100,12 @@ int NullCardAbstraction::get_bucket_internal( const Game *game,
     if( i > 0 ) {
       bucket *= deck_size;
     }
-    bucket += hand.holeCards[ player ][ i ];
+    bucket += hole_cards[ player ][ i ];
   }
   for( int r = 0; r <= round; ++r ) {
     for( int i = bcStart( game, r ); i < sumBoardCards( game, r ); ++i ) {
       bucket *= deck_size;
-      bucket += hand.boardCards[ i ];
+      bucket += board_cards[ i ];
     }
   }
 
@@ -145,7 +128,11 @@ int BlindCardAbstraction::num_buckets( const Game *game,
 
 int BlindCardAbstraction::get_bucket( const Game *game,
 				      const BettingNode *node,
-				      const hand_t &hand ) const
+				      const uint8_t board_cards
+				      [ MAX_BOARD_CARDS ],
+				      const uint8_t hole_cards
+				      [ MAX_PURE_CFR_PLAYERS ]
+				      [ MAX_HOLE_CARDS ] ) const
 {
   return 0;
 }

@@ -28,15 +28,12 @@ public:
   virtual int num_buckets( const Game *game, const BettingNode *node ) const = 0;
   virtual int get_bucket( const Game *game,
 			  const BettingNode *node,
-			  const hand_t &hand ) const = 0;
+			  const uint8_t board_cards[ MAX_BOARD_CARDS ],
+			  const uint8_t hole_cards[ MAX_PURE_CFR_PLAYERS ]
+			  [ MAX_HOLE_CARDS ] ) const = 0;
   virtual bool can_precompute_buckets( ) const { return false; }
   virtual void precompute_buckets( const Game *game,
 				   hand_t &hand ) const;
-
-  void count_entries( const Game *game,
-		      const BettingNode *node,
-		      size_t num_entries_per_bucket[ MAX_ROUNDS ],
-		      size_t total_num_entries[ MAX_ROUNDS ] ) const;
 
 protected:
 };
@@ -55,14 +52,18 @@ public:
   virtual int num_buckets( const Game *game, const BettingNode *node ) const;
   virtual int get_bucket( const Game *game,
 			  const BettingNode *node,
-			  const hand_t &hand ) const;
+			  const uint8_t board_cards[ MAX_BOARD_CARDS ],
+			  const uint8_t hole_cards[ MAX_PURE_CFR_PLAYERS ]
+			  [ MAX_HOLE_CARDS ] ) const;
   virtual bool can_precompute_buckets( ) const { return true; }
   virtual void precompute_buckets( const Game *game,
 				   hand_t &hand ) const;
 
 protected:
   virtual int get_bucket_internal( const Game *game,
-				   const hand_t &hand,
+				   const uint8_t board_cards[ MAX_BOARD_CARDS ],
+				   const uint8_t hole_cards[ MAX_PURE_CFR_PLAYERS ]
+				   [ MAX_HOLE_CARDS ],
 				   const int player,
 				   const int round ) const;
   
@@ -82,7 +83,9 @@ public:
   virtual int num_buckets( const Game *game, const BettingNode *node ) const;
   virtual int get_bucket( const Game *game,
 			  const BettingNode *node,
-			  const hand_t &hand ) const;
+			  const uint8_t board_cards[ MAX_BOARD_CARDS ],
+			  const uint8_t hole_cards[ MAX_PURE_CFR_PLAYERS ]
+			  [ MAX_HOLE_CARDS ] ) const;
   virtual bool can_precompute_buckets( ) const { return true; }
   virtual void precompute_buckets( const Game *game,
 				   hand_t &hand ) const;

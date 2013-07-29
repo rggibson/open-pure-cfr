@@ -19,8 +19,8 @@ extern "C" {
 
 typedef struct {
   /* The actual cards for this hand */
-  uint8_t boardCards[ MAX_BOARD_CARDS ];
-  uint8_t holeCards[ MAX_PURE_CFR_PLAYERS ][ MAX_HOLE_CARDS ];
+  uint8_t board_cards[ MAX_BOARD_CARDS ];
+  uint8_t hole_cards[ MAX_PURE_CFR_PLAYERS ][ MAX_HOLE_CARDS ];
   /* When bucketing is only dependent on the round,
    * we just compute the buckets once and store
    */

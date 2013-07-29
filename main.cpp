@@ -22,6 +22,7 @@ extern "C" {
 /* Pure CFR includes */
 #include "parameters.hpp"
 #include "pure_cfr_machine.hpp"
+#include "pure_cfr_player.hpp"
 #include "utility.hpp"
 
 typedef struct {
@@ -40,27 +41,6 @@ typedef struct {
 } worker_thread_args_t;
 
 pthread_attr_t thread_attributes;
-
-void print_player_file( const Parameters &params, const char *filename_prefix )
-{
-  /* Build the filename to print to */
-  char player_filename[ PATH_LENGTH ];
-  snprintf( player_filename, PATH_LENGTH, "%s.player", filename_prefix );
-
-  /* Open the file */
-  FILE *file = fopen( player_filename, "w" );
-  if( file == NULL ) {
-    fprintf( stderr, "Could not open player file [%s], skipping...\n",
-	     player_filename );
-    return;
-  }
-
-  /* Print the goods */
-  params.print_params( file );
-  fprintf( file, "BINARY_FILENAME_PREFIX %s\n", filename_prefix );
-  
-  fclose( file );
-}
 
 void init_pure_cfr_counter( pure_cfr_counter_t &counter )
 {
@@ -112,11 +92,11 @@ void *thread_iterations( void *thread_args )
    * and we ensure that the seeds are different for each thread
    */
   rng_state_t rng;
-  uint32_t seeds[ 4 ];
-  for( int i = 0; i < 4; ++i ) {
+  uint32_t seeds[ NUM_RNG_SEEDS ];
+  for( int i = 0; i < NUM_RNG_SEEDS; ++i ) {
     seeds[ i ] = args->params->rng_seeds[ i ] + 1234 + 4 * args->thread_num + i;
   }
-  init_by_array( &rng, seeds, 4 );
+  init_by_array( &rng, seeds, NUM_RNG_SEEDS );
 
   while( true ) {
 
@@ -354,7 +334,9 @@ int main( const int argc, const char *argv[] )
   }
 
   /* Initialize regrets and things before starting Pure CFR iterations */
+  fprintf( stderr, "Initializing Pure CFR machine... " );
   PureCfrMachine pcm( params );
+  fprintf( stderr, "done!\n" );
 
   /* Increase thread stack size */
   pthread_attr_init( &thread_attributes );

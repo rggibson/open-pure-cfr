@@ -94,3 +94,35 @@ AbstractGame::~AbstractGame( )
     game = NULL;
   }  
 }
+
+void AbstractGame::count_entries_r( const BettingNode *node,
+				    size_t num_entries_per_bucket[ MAX_ROUNDS ],
+				    size_t total_num_entries[ MAX_ROUNDS ] ) const
+{
+  const BettingNode *child = node->get_child( );
+
+  if( child == NULL ) {
+    /* Terminal node */
+    return;
+  }
+
+  const int8_t round = node->get_round( );
+  const int num_choices = node->get_num_choices( );
+
+  /* Update entries counts */
+  num_entries_per_bucket[ round ] += num_choices;
+  const int buckets = card_abs->num_buckets( game, node );
+  total_num_entries[ round ] += buckets * num_choices;
+
+  /* Recurse */
+  for( int c = 0; c < num_choices; ++c ) {
+    count_entries_r( child, num_entries_per_bucket, total_num_entries );
+    child = child->get_sibling( );
+  }
+}
+
+void AbstractGame::count_entries( size_t num_entries_per_bucket[ MAX_ROUNDS ],
+				  size_t total_num_entries[ MAX_ROUNDS ] ) const
+{
+  count_entries_r( betting_tree_root, num_entries_per_bucket, total_num_entries );
+}
