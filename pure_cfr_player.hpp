@@ -29,9 +29,12 @@ public:
   PureCfrPlayer( const char *player_file );
   ~PureCfrPlayer( );
 
+  virtual const AbstractGame *get_abstract_game( ) const { return ag; }
+
   virtual void get_action_probs( State &state,
 				 double action_probs
-				 [ MAX_ABSTRACT_ACTIONS ] );
+				 [ MAX_ABSTRACT_ACTIONS ],
+				 int bucket = -1 );
   virtual Action get_action( State &state );
 
 protected:

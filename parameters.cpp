@@ -228,7 +228,7 @@ void Parameters::print_params( FILE *file ) const
 {
   fprintf( file, "GAME_FILE %s\n", game_file );
   fprintf( file, "OUTPUT_PREFIX %s\n", output_prefix );
-  fprintf( file, "RNG_SEEDS %zu %zu %zu %zu\n", rng_seeds[ 0 ], rng_seeds[ 1 ],
+  fprintf( file, "RNG_SEEDS %u %u %u %u\n", rng_seeds[ 0 ], rng_seeds[ 1 ],
 	   rng_seeds[ 2 ], rng_seeds[ 3 ] );
   fprintf( file, "CARD_ABSTRACTION %s\n", card_abs_type_to_str[ card_abs_type ] );
   fprintf( file, "ACTION_ABSTRACTION %s\n",
@@ -282,7 +282,7 @@ int Parameters::read_params( FILE *file )
       while( isspace( line[ i ] ) || line[ i ] == '=' ) {
 	++i;
       }
-      if( sscanf( &line[ i ], "%zu %zu %zu %zu", &rng_seeds[ 0 ], &rng_seeds[ 1 ],
+      if( sscanf( &line[ i ], "%u %u %u %u", &rng_seeds[ 0 ], &rng_seeds[ 1 ],
 		  &rng_seeds[ 2 ], &rng_seeds[ 3 ] ) < 4 ) {
 	fprintf( stderr, "Error reading 4 RNG_SEEDS from line [%s]\n", line );
 	return 1;
@@ -408,4 +408,6 @@ int Parameters::read_params( FILE *file )
       }
     }
   }
+
+  return 0;
 }

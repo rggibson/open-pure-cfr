@@ -61,6 +61,12 @@ int NullCardAbstraction::num_buckets( const Game *game,
   return m_num_buckets[ node->get_round() ];
 }
 
+int NullCardAbstraction::num_buckets( const Game *game,
+				      const State &state ) const
+{
+  return m_num_buckets[ state.round ];
+}
+
 int NullCardAbstraction::get_bucket( const Game *game,
 				     const BettingNode *node,
 				     const uint8_t board_cards[ MAX_BOARD_CARDS ],
@@ -100,12 +106,14 @@ int NullCardAbstraction::get_bucket_internal( const Game *game,
     if( i > 0 ) {
       bucket *= deck_size;
     }
-    bucket += hole_cards[ player ][ i ];
+    uint8_t card = hole_cards[ player ][ i ];
+    bucket += rankOfCard( card ) * game->numSuits + suitOfCard( card );
   }
   for( int r = 0; r <= round; ++r ) {
     for( int i = bcStart( game, r ); i < sumBoardCards( game, r ); ++i ) {
       bucket *= deck_size;
-      bucket += board_cards[ i ];
+      uint8_t card = board_cards[ i ];
+      bucket += rankOfCard( card ) * game->numSuits + suitOfCard( card );
     }
   }
 
@@ -122,6 +130,12 @@ BlindCardAbstraction::~BlindCardAbstraction( )
 
 int BlindCardAbstraction::num_buckets( const Game *game,
 				       const BettingNode *node ) const
+{
+  return 1;
+}
+
+int BlindCardAbstraction::num_buckets( const Game *game,
+				       const State &state ) const
 {
   return 1;
 }

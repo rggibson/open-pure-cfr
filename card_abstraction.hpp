@@ -26,6 +26,7 @@ public:
   virtual ~CardAbstraction( );
 
   virtual int num_buckets( const Game *game, const BettingNode *node ) const = 0;
+  virtual int num_buckets( const Game *game, const State &state ) const = 0;
   virtual int get_bucket( const Game *game,
 			  const BettingNode *node,
 			  const uint8_t board_cards[ MAX_BOARD_CARDS ],
@@ -50,6 +51,7 @@ public:
   virtual ~NullCardAbstraction( );
 
   virtual int num_buckets( const Game *game, const BettingNode *node ) const;
+  virtual int num_buckets( const Game *game, const State &state ) const;
   virtual int get_bucket( const Game *game,
 			  const BettingNode *node,
 			  const uint8_t board_cards[ MAX_BOARD_CARDS ],
@@ -81,6 +83,7 @@ public:
   virtual ~BlindCardAbstraction( );
 
   virtual int num_buckets( const Game *game, const BettingNode *node ) const;
+  virtual int num_buckets( const Game *game, const State &state ) const;
   virtual int get_bucket( const Game *game,
 			  const BettingNode *node,
 			  const uint8_t board_cards[ MAX_BOARD_CARDS ],

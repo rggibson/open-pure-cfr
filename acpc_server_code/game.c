@@ -1030,6 +1030,13 @@ int rankHand( const Game *game, const State *state,
 	      const uint8_t player )
 {
   int i;
+
+  if( ( game->numHoleCards == 1 )
+      && ( sumBoardCards( game, state->round ) == 0 ) ) {
+    /* Special one card hand ranker.  Works for Kuhn Poker. */
+    return rankOfCard( state->holeCards[ player ][ 0 ] );
+  }
+  
   Cardset c = emptyCardset();
 
   for( i = 0; i < game->numHoleCards; ++i ) {

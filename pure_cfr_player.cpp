@@ -90,7 +90,7 @@ PureCfrPlayer::PureCfrPlayer( const char *player_file )
     exit( -1 );
   }
   dump_start = mmap( NULL, sb.st_size, PROT_READ, MAP_SHARED, fileno( file ), 0 );
-  if( dump_start = MAP_FAILED ) {
+  if( dump_start == MAP_FAILED ) {
     fprintf( stderr, "Error mapping binary file [%s]\n", binary_filename );
     exit( -1 );
   }
@@ -141,7 +141,8 @@ PureCfrPlayer::~PureCfrPlayer( )
 
 void PureCfrPlayer::get_action_probs( State &state,
 				      double action_probs
-				      [ MAX_ABSTRACT_ACTIONS ] )
+				      [ MAX_ABSTRACT_ACTIONS ],
+				      int bucket )
 {
   /* Initialize action probs to the default in case we must abort early
    * for one of several reasons
@@ -156,6 +157,8 @@ void PureCfrPlayer::get_action_probs( State &state,
 
   /* Find the current node from the sequence of actions in state */
   const BettingNode *node = ag->betting_tree_root;
+  State old_state;
+  initState( ag->game, 0, &old_state );
   if( verbose ) {
     fprintf( stderr, "Translated abstract state: " );
   }
@@ -163,9 +166,9 @@ void PureCfrPlayer::get_action_probs( State &state,
     for( int a = 0; a < state.numActions[ r ]; ++a ) {
       const Action real_action = state.action[ r ][ a ];
       Action abstract_actions[ MAX_ABSTRACT_ACTIONS ];
-      int num_actions = ag->action_abs->get_actions( ag->game, state,
+      int num_actions = ag->action_abs->get_actions( ag->game, old_state,
 						     abstract_actions );
-      if( num_actions == node->get_num_choices( ) ) {
+      if( num_actions != node->get_num_choices( ) ) {
 	if( verbose ) {
 	  fprintf( stderr, "Number of actions %d does not match number "
 		   "of choices %d\n", num_actions, node->get_num_choices( ) );
@@ -258,10 +261,17 @@ void PureCfrPlayer::get_action_probs( State &state,
 	}
 	if( choice >= num_actions ) {
 	  if( verbose ) {
-	    fprintf( stderr, "Unable to translate action at round %d, turn %d\n",
-		     r, a );
-	    return;
+	    fprintf( stderr, "Unable to translate action at round %d, turn %d; "
+		     "actions available are:", r, a );
+	    for( int i = 0; i < num_actions; ++i ) {
+	      char action_str[ PATH_LENGTH ];
+	      printAction( ag->game, &abstract_actions[ i ], PATH_LENGTH,
+			   action_str );
+	      fprintf( stderr, " %s", action_str );
+	    }
+	    fprintf( stderr, "\n" );
 	  }
+	  return;
 	}
       }
 
@@ -271,7 +281,7 @@ void PureCfrPlayer::get_action_probs( State &state,
 		     PATH_LENGTH, action_str );
 	fprintf( stderr, " %s", action_str );
       }
-      /* Move the current node along */
+      /* Move the current node and old_state along */
       node = node->get_child( );
       for( int i = 0; i < choice; ++i ) {
 	node = node->get_sibling( );
@@ -282,19 +292,21 @@ void PureCfrPlayer::get_action_probs( State &state,
 	  return;
 	}
       }
-
       if( node->get_child( ) == NULL ) {
 	if( verbose ) {
 	  fprintf( stderr, " Abstract game over\n" );
 	}
 	return;
-      }      
+      }
+      doAction( ag->game, &abstract_actions[ choice ], &old_state );
     }
   }
 
   /* Bucket the cards */
-  int bucket = ag->card_abs->get_bucket( ag->game, node,
-					 state.boardCards, state.holeCards );
+  if( bucket == -1 ) {
+    bucket = ag->card_abs->get_bucket( ag->game, node,
+				       state.boardCards, state.holeCards );
+  }
   if( verbose ) {
     fprintf( stderr, " Bucket=%d\n", bucket );
   }
