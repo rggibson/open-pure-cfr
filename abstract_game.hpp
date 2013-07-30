@@ -6,6 +6,8 @@
  * Email: richard.g.gibson@gmail.com
  *
  * Wrapper class for game and abstraction classes. 
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL indluces */

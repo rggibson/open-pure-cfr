@@ -1,9 +1,11 @@
-/* pure_cfr_player.cpp
+/* player_module.cpp
  * Richard Gibson, Jul 26, 2013
  * Email: richard.g.gibson@gmail.com
  *
- * Player class that provides an interface for actually playing
+ * Player module class that provides an interface for actually playing
  * poker with a dealer and looking up action probabilities.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL indluces */
@@ -16,10 +18,10 @@ extern "C" {
 }
 
 /* Pure CFR includes */
-#include "pure_cfr_player.hpp"
+#include "player_module.hpp"
 #include "utility.hpp"
 
-PureCfrPlayer::PureCfrPlayer( const char *player_file )
+PlayerModule::PlayerModule( const char *player_file )
 {
   /* Open up the player file for reading */
   FILE *file = fopen( player_file, "r" );
@@ -125,7 +127,7 @@ PureCfrPlayer::PureCfrPlayer( const char *player_file )
   }
 }
 
-PureCfrPlayer::~PureCfrPlayer( )
+PlayerModule::~PlayerModule( )
 {
   /* Unmap the binary file */
   munmap( dump_start, sb.st_size );
@@ -139,7 +141,7 @@ PureCfrPlayer::~PureCfrPlayer( )
   ag = NULL;
 }
 
-void PureCfrPlayer::get_action_probs( State &state,
+void PlayerModule::get_action_probs( State &state,
 				      double action_probs
 				      [ MAX_ABSTRACT_ACTIONS ],
 				      int bucket )
@@ -348,7 +350,7 @@ void PureCfrPlayer::get_action_probs( State &state,
   }
 }
 
-Action PureCfrPlayer::get_action( State &state )
+Action PlayerModule::get_action( State &state )
 {
   /* Get the abstract game action probabilities */
   double action_probs[ MAX_ABSTRACT_ACTIONS ];
@@ -397,7 +399,7 @@ Action PureCfrPlayer::get_action( State &state )
   return actions[ a ];
 }
 
-void PureCfrPlayer::get_default_action_probs( State &state,
+void PlayerModule::get_default_action_probs( State &state,
 					      double action_probs
 					      [ MAX_ABSTRACT_ACTIONS ] ) const
 {

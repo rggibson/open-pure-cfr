@@ -1,12 +1,14 @@
 #ifndef __PURE_CFR_PURE_CFR_PLAYER_HPP__
 #define __PURE_CFR_PURE_CFR_PLAYER_HPP__
 
-/* pure_cfr_player.hpp
+/* player_module.hpp
  * Richard Gibson, Jul 26, 2013
  * Email: richard.g.gibson@gmail.com
  *
- * Player class that provides an interface for actually playing
+ * Player module class that provides an interface for actually playing
  * poker with a dealer and looking up action probabilities.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL indluces */
@@ -23,11 +25,11 @@ extern "C" {
 #include "abstract_game.hpp"
 #include "entries.hpp"
 
-class PureCfrPlayer {
+class PlayerModule {
 public:
 
-  PureCfrPlayer( const char *player_file );
-  ~PureCfrPlayer( );
+  PlayerModule( const char *player_file );
+  ~PlayerModule( );
 
   virtual const AbstractGame *get_abstract_game( ) const { return ag; }
 

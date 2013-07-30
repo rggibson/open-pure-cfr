@@ -6,6 +6,8 @@
  * Email: richard.g.gibson@gmail.com
  *
  * Defines a number of contant values for array sizes and stuff.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL includes */

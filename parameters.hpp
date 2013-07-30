@@ -5,8 +5,10 @@
  * Richard Gibson, Jun 28, 2013
  * Email: richard.g.gibson@gmail.com
  *
- * The Parameters class parses command line arguments and stores the parameter options
- * selected.
+ * The Parameters class parses command line arguments and stores the parameter
+ * options selected.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL includes */

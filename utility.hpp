@@ -6,6 +6,8 @@
  * Email: richard.g.gibson@gmail.com
  *
  * Home of useful functions used in multiple places in the project.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL includes */

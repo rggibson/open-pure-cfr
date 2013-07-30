@@ -6,6 +6,8 @@
  * Email: richard.g.gibson@gmail.com
  *
  * A class for storing regret and avg strategies of variable type.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL includes */

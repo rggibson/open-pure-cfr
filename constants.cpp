@@ -3,6 +3,8 @@
  * Email: richard.g.gibson@gmail.com
  *
  * Initializes constant arrays to their values.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL includes */

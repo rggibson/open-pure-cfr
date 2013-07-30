@@ -5,7 +5,10 @@
  * hand.hpp
  * Richard Gibson, Jun 28, 2013
  *
- * Structure to represent a hand with possible precomputed buckets and showdown info.
+ * Structure to represent a hand with possible precomputed buckets and
+ * showdown info.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL includes */

@@ -2,6 +2,8 @@
  * Richard Gibson, Jun 28, 2013
  *
  * Constructors and evaluation methods for betting nodes.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL includes */

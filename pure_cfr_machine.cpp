@@ -3,6 +3,8 @@
  * Email: richard.g.gibson@gmail.com
  *
  * Contains the hand generation and Pure CFR tree walk methods.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL includes */

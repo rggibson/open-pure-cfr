@@ -4,6 +4,8 @@
  *
  * Contains the remaining Entries procedures that are not implemented in
  * entries.hpp
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL includes */

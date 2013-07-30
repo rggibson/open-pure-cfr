@@ -2,7 +2,10 @@
  * Richard Gibson, Jun 28, 2013
  * Email: richard.g.gibson@gmail.com
  *
- * Home of implementations of useful functions used in multiple places in the project.
+ * Home of implementations of useful functions used in multiple places in
+ * the project.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL includes */

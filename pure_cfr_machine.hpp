@@ -7,6 +7,8 @@
  *
  * Stores regrets + average strategy for all players, stores the betting tree
  * and constains Pure CFR iterations routine.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL indluces */

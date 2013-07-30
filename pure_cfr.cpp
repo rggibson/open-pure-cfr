@@ -4,6 +4,8 @@
  *
  * Entry point into Pure CFR that spawns worker threads to run
  * Pure CFR iterations.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ includes */
@@ -23,7 +25,7 @@ extern "C" {
 /* Pure CFR includes */
 #include "parameters.hpp"
 #include "pure_cfr_machine.hpp"
-#include "pure_cfr_player.hpp"
+#include "player_module.hpp"
 #include "utility.hpp"
 
 typedef struct {

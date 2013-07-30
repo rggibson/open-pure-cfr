@@ -6,9 +6,12 @@
  * Email: richard.g.gibson@gmail.com
  *
  * Classes that represent nodes in the betting tree (game tree without cards).
- * These nodes are used as an alternative to passing an acpc_server state object during the
- * tree walk.  These nodes store information about how to evaluate the game at terminal
- * nodes so that this information only needs to be computed once.
+ * These nodes are used as an alternative to passing an acpc_server state object
+ * during the tree walk.  These nodes store information about how to evaluate
+ * the game at terminal nodes so that this information only needs to be
+ * computed once.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL indluces */

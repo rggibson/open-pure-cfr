@@ -3,6 +3,8 @@
  * Email: richard.g.gibson@gmail.com
  *
  * Parse command line arguments and store options selected.
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL includes */

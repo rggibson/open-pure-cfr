@@ -5,6 +5,8 @@
  * Richard Gibson, Jun 28, 2013
  *
  * Home of the action_abstraction abstract class and all implementing classes
+ *
+ * Copyright (C) 2013 by Richard Gibson
  */
 
 /* C / C++ / STL indluces */
