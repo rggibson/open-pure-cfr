@@ -18,7 +18,7 @@ all: pure_cfr print_player_strategy pure_cfr_player
 	$(CXX) $(OPT) -c $^
 
 pure_cfr: $(PURE_CFR_FILES)
-	$(CXX) $(OPT) -lpthread -o $@ $(PURE_CFR_FILES)
+	$(CXX) $(OPT) -pthread -o $@ $(PURE_CFR_FILES)
 
 print_player_strategy: $(PRINT_PLAYER_STRATEGY_FILES)
 	$(CXX) $(OPT) -o $@ $(PRINT_PLAYER_STRATEGY_FILES)
