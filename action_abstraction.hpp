@@ -24,7 +24,7 @@ class ActionAbstraction {
 public:
 
   ActionAbstraction( );
-  ~ActionAbstraction( );
+  virtual ~ActionAbstraction( );
 
   virtual int get_actions( const Game *game,
 			   const State &state,
@@ -41,7 +41,7 @@ class NullActionAbstraction : public ActionAbstraction {
 public:
 
   NullActionAbstraction( );
-  ~NullActionAbstraction( );
+  virtual ~NullActionAbstraction( );
 
   virtual int get_actions( const Game *game,
 			   const State &state,
@@ -58,7 +58,7 @@ class FcpaActionAbstraction : public ActionAbstraction {
 public:
 
   FcpaActionAbstraction( );
-  ~FcpaActionAbstraction( );
+  virtual ~FcpaActionAbstraction( );
 
   virtual int get_actions( const Game *game,
 			   const State &state,

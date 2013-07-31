@@ -29,7 +29,7 @@ class PlayerModule {
 public:
 
   PlayerModule( const char *player_file );
-  ~PlayerModule( );
+  virtual ~PlayerModule( );
 
   virtual const AbstractGame *get_abstract_game( ) const { return ag; }
 

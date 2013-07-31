@@ -27,10 +27,10 @@ class AbstractGame {
 public:
 
   AbstractGame( const Parameters &params );
-  ~AbstractGame( );
+  virtual ~AbstractGame( );
 
-  void count_entries( size_t num_entries_per_bucket[ MAX_ROUNDS ],
-		      size_t total_num_entries[ MAX_ROUNDS ] ) const;
+  virtual void count_entries( size_t num_entries_per_bucket[ MAX_ROUNDS ],
+			      size_t total_num_entries[ MAX_ROUNDS ] ) const;
 
   Game *game;
 

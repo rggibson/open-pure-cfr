@@ -34,12 +34,12 @@ typedef struct {
 class Parameters {
 public:
   Parameters();
-  ~Parameters();
+  virtual ~Parameters();
 
-  void print_usage( const char *prog_name ) const;
-  int parse( const int argc, const char *argv[] );
-  void print_params( FILE *file ) const;
-  int read_params( FILE *file );
+  virtual void print_usage( const char *prog_name ) const;
+  virtual int parse( const int argc, const char *argv[] );
+  virtual void print_params( FILE *file ) const;
+  virtual int read_params( FILE *file );
 
   /* Required parameters */
   char game_file[ PATH_LENGTH ];

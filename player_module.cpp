@@ -22,6 +22,8 @@ extern "C" {
 #include "utility.hpp"
 
 PlayerModule::PlayerModule( const char *player_file )
+  : ag( NULL ),
+    verbose( false )
 {
   /* Open up the player file for reading */
   FILE *file = fopen( player_file, "r" );
@@ -400,8 +402,8 @@ Action PlayerModule::get_action( State &state )
 }
 
 void PlayerModule::get_default_action_probs( State &state,
-					      double action_probs
-					      [ MAX_ABSTRACT_ACTIONS ] ) const
+					     double action_probs
+					     [ MAX_ABSTRACT_ACTIONS ] ) const
 {
   /* Default will be always call */
   

@@ -92,7 +92,9 @@ int main( const int argc, const char *argv[] )
 
   /* Create the player, get the abstract game */
   int index = 1;
+  fprintf( stderr, "Loading player module... " );
   PlayerModule player_module( argv[ index ] );
+  fprintf( stderr, "done!\n" );
   ++index;
   const AbstractGame *ag = player_module.get_abstract_game( );
 
@@ -106,6 +108,10 @@ int main( const int argc, const char *argv[] )
 		 argv[ index ] );
 	return 1;
       }
+      if( ( max_round <= 0 ) || ( max_round > MAX_ROUNDS ) ) {
+	fprintf( stderr, "max-round must be between 1 and %d\n", MAX_ROUNDS );
+	return 1;
+      }
     } else {
       fprintf( stderr, "Unrecognized argument [%s]\n", argv[ index ] );
       return 1;
@@ -113,6 +119,7 @@ int main( const int argc, const char *argv[] )
   }
 
   /* Print the strategy */
+  fprintf( stderr, "Starting walk of abstract game tree...\n" );
   State state;
   for( int p = 0; p < ag->game->numPlayers; ++p ) {
     initState( ag->game, 0, &state );
