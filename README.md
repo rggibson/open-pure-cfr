@@ -23,5 +23,19 @@ This is the main program that generates strategies for games specified under the
 After these two arguments are specified, a number of different options can be selected:
   * `--config=<file>` - Overwrites the two required arguments and the default options through values specified in `file`.  See `parameters.cpp::read_params( )` for details on how to format this file.
   * `--rng=<seed1:seed2:seed3:seed4|TIME>` - Specifies the seeds to be used to initialize the random number generator, where `seed1`, `seed2`, `seed3`, and `seed4` are integer values.  The random number generator is used to sample a pure strategy profile on each iteration from chance and the players.  Alternatively, passing the option `--rng=TIME` initializes the random number generator according to the current time.
+  * `--card-abs=<NULL|BLIND>` - Specifies a card abstraction to be used.  Only two card abstractions are currently implemented.  `--card-abs=NULL` specifies no card abstraction (not even suit isomorphisms), while `--card-abs=BLIND` specifies that all hands fall into the same bucket.  NULL is only feasible in toy games, like Kuhn Poker, that use very few cards, while BLIND essentially means that the players never look at the public or their private cards.
+  * `--action-abs=<NULL|FCPA>` - Specifies an action abstraction to be used.  This option should only be used for nolimit games.  `--action-abs=NULL` specifies that all actions remain legal in the abstract game, while `--action-abs=FCPA` specifies that only fold, call, pot-sized raises, and all-ins are legal in the abstract game.  NULL is only feasible in small nolimit games with low stack sizes.  
+  * `--load-dump=<dump_prefix>` - Loads the regrets and (if `--no-average` is not selected) average strategy from a previous run from the files prefixed by `dump_prefix`.  This prefix should be the same prefix specified as the second required argument from the previous run (unless the filename(s) have since changed).
+  * `--threads=<num_threads>` - Specifies the number of threads to use.  Additional threads provide a near-linear speed-up in the algorithm, so use as many as you can afford.
+
+Implementation Quirks
+---------------------
+
+###Parallelization
+
+When multiple threads are specified for `pure_cfr` through the `--threads` option, these threads act independently on the regrets and average strategy in shared memory.  Each threas runs independent iterations through the entire tree visited by the sampled pure strategy profile and no safety precautions are taken to avoid the threads from conflicting with one another.  This means that if two threads happen to update the regret at the same location at the same time, one of the updates will be overwritten.  Because the chances of this occurring in a large game tree are slim, and because billions of iterations are typically required before competent play is reached, a few iterations of work lost is not a big concern.
+
+More Information
+----------------
 
 A [demo of Pure CFR](http://jeskola.net/cfr) and other variants are provided by Oskari Tammelin.
