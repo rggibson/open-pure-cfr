@@ -16,7 +16,9 @@ First, you must have both `make` and `gcc-g++` installed on your machine.  Then,
 `pure_cfr`
 ----------
 
-This is the main program that generates strategies for games specified under the [project_acpc_server framework](http://www.computerpokercompetition.org/downloads/code/competition_server/project_acpc_server_v1.0.33.tar.bz2).  Run `./pure_cfr` with no additional arguments to display the usage information.
+This is the main program that generates strategies for games specified under the [project_acpc_server framework](http://www.computerpokercompetition.org/downloads/code/competition_server/project_acpc_server_v1.0.33.tar.bz2).  Run `./pure_cfr` with no additional arguments to display the usage information.  We will now describe in detail each of the required and optional arguments before providing some examples of how to run `pure_cfr` on a variety of games.
+
+###Command-line Arguments
 
 `pure_cfr` requires two arguments.  The first argument must be a file that defines the game to be played.  The games provided by the [project_acpc_server code](http://www.computerpokercompetition.org/downloads/code/competition_server/project_acpc_server_v1.0.33.tar.bz2) can be found in the `games/` subdirectory, along with a definition for [Kuhn Poker](http://en.wikipedia.org/wiki/Kuhn_poker).  The second argument is a prefix that specifies where and what name the output files will be and have respectively.  
 
@@ -27,6 +29,10 @@ After these two arguments are specified, a number of different options can be se
   * `--action-abs=<NULL|FCPA>` - Specifies an action abstraction to be used.  This option should only be used for nolimit games.  `--action-abs=NULL` specifies that all actions remain legal in the abstract game, while `--action-abs=FCPA` specifies that only fold, call, pot-sized raises, and all-ins are legal in the abstract game.  NULL is only feasible in small nolimit games with low stack sizes.  
   * `--load-dump=<dump_prefix>` - Loads the regrets and (if `--no-average` is not selected) average strategy from a previous run from the files prefixed by `dump_prefix`.  This prefix should be the same prefix specified as the second required argument from the previous run (unless the filename(s) have since changed).
   * `--threads=<num_threads>` - Specifies the number of threads to use.  Additional threads provide a near-linear speed-up in the algorithm, so use as many as you can afford.
+  * `--status=<dd:hh:mm:ss>` - Prints status updates to `stderr` every `dd` days, `hh` hours, `mm` minutes, and `ss` seconds.
+  * `--checkpoint=<start_time[,mult_time[,add_time]]>` - Specifies how frequently the program should dump the regrets and average strategy to disk, where `start_time`, `mult_time`, and `add_time` are specified using the `dd:hh:mm:ss` format.  First, the program will dump after `start_time` has passed from the time the program started.  Later dump times depend on whether `mult_time` and `add_time` are provided.  If `mult_time` is provided, the next dump will come after `start_time` * `mult_time`, then again after `start_time` * `mult_time` * `mult_time`, and so on until the program terminates.  If, in addition, `add_time` is provided, then the next dump will come after `start_time` * `mult_time` + `add_time`, then again after (`start_time` * `mult_time` + `add_time`) * `mult_time` + `add_time`, and so on.  If `mult_time` is not specified, then dumps will occur at 2 * `start_time`, then again after 3 * `start_time`, and so on.
+  * `--max-walltime=<dd:hh:mm:ss>` - Specifies when it is time to perform a final dump of regrets and average strategy to disk.  After the final dump, the program is terminated.
+  * `--no-average` - Specifies that no average strategy is to be computed.  Currently, average strategy computation in games with more than two players is not supported, and so for such games, this option is mandatory.
 
 Implementation Quirks
 ---------------------
