@@ -16,7 +16,7 @@ First, you must have both `make` and `gcc-g++` installed on your machine.  Then,
 `pure_cfr`
 ----------
 
-This is the main program that generates strategies for games specified under the [project_acpc_server framework](http://www.computerpokercompetition.org/downloads/code/competition_server/project_acpc_server_v1.0.33.tar.bz2).  Run `./pure_cfr` with no additional arguments to display the usage information.  We will now describe in detail each of the required and optional arguments before providing some examples of how to run `pure_cfr` on a variety of games.
+This is the main program that generates strategies for games specified under the [project_acpc_server framework](http://www.computerpokercompetition.org/downloads/code/competition_server/project_acpc_server_v1.0.33.tar.bz2).  Sets of three files are generated during the run, a `.regrets`, `.avg-strategy`, and `.player` file.  Run `./pure_cfr` with no additional arguments to display the usage information.  We will now describe in detail each of the required and optional arguments before providing some examples of how to run `pure_cfr` on a variety of games.
 
 ###Command-line Arguments
 
@@ -33,6 +33,23 @@ After these two arguments are specified, a number of different options can be se
   * `--checkpoint=<start_time[,mult_time[,add_time]]>` - Specifies how frequently the program should dump the regrets and average strategy to disk, where `start_time`, `mult_time`, and `add_time` are specified using the `dd:hh:mm:ss` format.  First, the program will dump after `start_time` has passed from the time the program started.  Later dump times depend on whether `mult_time` and `add_time` are provided.  If `mult_time` is provided, the next dump will come after `start_time` * `mult_time`, then again after `start_time` * `mult_time` * `mult_time`, and so on until the program terminates.  If, in addition, `add_time` is provided, then the next dump will come after `start_time` * `mult_time` + `add_time`, then again after (`start_time` * `mult_time` + `add_time`) * `mult_time` + `add_time`, and so on.  If `mult_time` is not specified, then dumps will occur at 2 * `start_time`, then again after 3 * `start_time`, and so on.
   * `--max-walltime=<dd:hh:mm:ss>` - Specifies when it is time to perform a final dump of regrets and average strategy to disk.  After the final dump, the program is terminated.
   * `--no-average` - Specifies that no average strategy is to be computed.  Currently, average strategy computation in games with more than two players is not supported, and so for such games, this option is mandatory.
+
+###Examples
+
+Let's start with a very simple example that requires very little computing resources to run:
+
+> `./pure_cfr games/kuhn.game test.kuhn --status=1 --max-walltime=30`
+
+This runs `pure_cfr` on unabstracted Kuhn Poker for 30 seconds, with status updates printed every second.  Once complete, you should have three files that look something like:
+* `test.kuhn.iter-???.secs-60.regrets` - This is a binary file that contains the accumulated regret for both players at every information set in the game.
+* `test.kuhn.iter-???.secs-60.avg-strategy` - This is another binary file that specifies the (sampled) average strategy for both players.
+* `test.kuhn.iter-???.secs-60.player` - This is a human-readable wrapper file that contains information about the command-line arguments specified and the prefix of the binary files.  On repeated runs, you can instead pass in `--config=test.kuhn.iter-???.secs-60.player` rather than specifying the options on the command line.  This file is also needed for `print_player_strategy` and `pure_cfr_player` described below.
+
+Our second example converges to an equilibrium for abstract heads-up limit Texas hold'em where neither player looks at the cards dealt:
+
+> `./pure_cfr games/holdem.limit.2p.reverse_blinds.game test.holdem.2pl --rng=TIME --card-abs=BLIND --threads=4 --checkpoint=1:0:0 --max-walltime=1:0:0:0`
+
+
 
 Implementation Quirks
 ---------------------
