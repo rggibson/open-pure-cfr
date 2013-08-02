@@ -38,16 +38,46 @@ After these two arguments are specified, a number of different options can be se
 
 Let's start with a very simple example that requires very little computing resources to run:
 
-> `./pure_cfr games/kuhn.game test.kuhn --status=1 --max-walltime=30`
+    ./pure_cfr games/kuhn.game test.kuhn --status=1 --max-walltime=30
 
 This runs `pure_cfr` on unabstracted Kuhn Poker for 30 seconds, with status updates printed every second.  Once complete, you should have three files that look something like:
 * `test.kuhn.iter-???.secs-60.regrets` - This is a binary file that contains the accumulated regret for both players at every information set in the game.
 * `test.kuhn.iter-???.secs-60.avg-strategy` - This is another binary file that specifies the (sampled) average strategy for both players.
-* `test.kuhn.iter-???.secs-60.player` - This is a human-readable wrapper file that contains information about the command-line arguments specified and the prefix of the binary files.  On repeated runs, you can instead pass in `--config=test.kuhn.iter-???.secs-60.player` rather than specifying the options on the command line.  This file is also needed for `print_player_strategy` and `pure_cfr_player` described below.
+* `test.kuhn.iter-???.secs-60.player` - This is a human-readable wrapper file that contains information about the command-line arguments specified and the prefix of the binary files.  On repeated runs, you can instead pass in `--config=test.kuhn.iter-???.secs-60.player` rather than specifying the options on the command line.  In addition, the `DO_AVERAGE` line in this file specifies whether the average strategy (`DO_AVERAGE TRUE`) or the current strategy (`DO_AVERAGE FALSE`) is to be played and printed by `pure_cfr_player` and `print_player_strategy` respectively.
 
 Our second example converges to an equilibrium for abstract heads-up limit Texas hold'em where neither player looks at the cards dealt:
 
-> `./pure_cfr games/holdem.limit.2p.reverse_blinds.game test.holdem.2pl --rng=TIME --card-abs=BLIND --threads=4 --checkpoint=1:0:0 --max-walltime=1:0:0:0`
+    ./pure_cfr games/holdem.limit.2p.reverse_blinds.game test.holdem.2pl --rng=TIME --card-abs=BLIND 
+    --threads=4 --checkpoint=1:0:0 --max-walltime=1:0:0:0
+
+Here, we specify the random number generator to be initialized by the current time, use 4 processors, dump regrets and average strategy to disk every hour, and terminate after 1 day.
+
+Finally, we also provide an example of running `pure_cfr` on abstract three-player nolimit Texas hold'em:
+
+    ./pure_cfr games/holdem.nolimit.3p.game test.holdem.3pn --card-abs=BLIND --action-abs=FCPA 
+    --threads=4 --max-walltime=3:0:0:0 --no-average
+    
+In addition to the players not being able to see any cards, the players may also only take the actions fold, call, pot-sized raise, and all-in.  The options specify 4 processors to be used and to terminate after 3 days of computation.  In addition, no average strategy is computed (recall that this is currently required for games with more than two players). Thus, upon completion, only the `.regrets` and `.player` files are written to disk.
+
+`print_player_strategy`
+-----------------------
+
+This program is a simple tool for displaying the outputted strategy in a human-readable format.  Running `./print_player_strategy` with no arguments displays the usage.  
+
+One argument is required and a second argument is optional.  For the required argument, `print_player_strategy` takes the filename of a `.player` file generated from `pure_cfr`.  The optional argument `--max-round=<round>` can be used to only print the strategy up and including round `round`.  
+
+For example, we can print our Kuhn Poker strategy generated from the example above and verify by hand that the average strategy is an approximate equilibrium as follows:
+
+    ./print_player_strategy test.kuhn.iter-???.secs-60.player
+    
+In addition, you can also display the *current* strategy specified by the regrets.  To do so, the line `DO_AVERAGE TRUE` to `DO_AVERAGE FALSE` and run `print_player_strategy` again.  This strategy may not converge to equilibrium.
+
+As a second example, to print out the pre-flop strategy of our heads-up limit hold'em profile generated above, we would run
+
+    ./print_player_strategy test.holdem.2pl.iter-???.secs-86400.player --max-round=1
+    
+`pure_cfr_player`
+-----------------
 
 
 
