@@ -6,7 +6,7 @@ Pure CFR is a time and memory-efficent variant of the [Counterfactual Regret Min
 About this Implementation
 -------------------------
 
-This implmentation of Pure CFR computes poker strategies that are playable in the [Annual Computer Poker Competition (ACPC)](http://www.computerpokercompetition.org).  In addition to games played at the ACPC, this implmentation can also be run on any game that can be defined under the [project_acpc_server framework](http://www.computerpokercompetition.org/downloads/code/competition_server/project_acpc_server_v1.0.33.tar.bz2).  The code runs on both Linux and Windows under [Cygwin](http://www.cygwin.com/).  The code has not been tested on a Mac, but feel free to give Mac a shot if you are feeling adventurous. 
+This implmentation of Pure CFR computes poker strategies that are playable in the [Annual Computer Poker Competition (ACPC)](http://www.computerpokercompetition.org).  In addition to games played at the ACPC, this implementation can also be run on any game that can be defined under the [project_acpc_server framework](http://www.computerpokercompetition.org/downloads/code/competition_server/project_acpc_server_v1.0.33.tar.bz2).  The code runs on both Linux and Windows under [Cygwin](http://www.cygwin.com/).  The code has not been tested on a Mac, but feel free to give Mac a shot if you are feeling adventurous. 
 
 Installing
 ----------
@@ -97,6 +97,11 @@ When multiple threads are specified for `pure_cfr` through the `--threads` optio
 ###Data Types
 
 As mentioned in the opening of this README, Pure CFR stores regrets and the average strategy using integer values rather than floating-point values.  In this implementation, each regret entry is stored as an `int` and each average strategy entry is stored as an `int32_t`.  One exception to this is that each average strategy entry in the preflop round is stored as an `int64_t`.  The reason 64-bit ints are used in the preflop instead of 32-bit ints is because the preflop entries are updated (incremented) most frequently of all the average strategy entries and will be the first to overflow.  I found cases where overflow occurred with 32-bit ints in the preflop long before the strategy had finished improving, and so 64-bit ints are now used to prevent early overflow.  Since the preflop round is also the smallest, the increase in memory usage in very minor.
+
+Acknowledgements
+----------------
+
+First of all, thanks to Oskari Tammelin for sharing his ideas for Pure CFR.  I must also thank Neil Burch and [Michael Johanson](http://cs.ualberta.ca/~johanson) of the [Computer Poker Research Group](http://poker.cs.ualberta.ca) as many of the optimization tricks in this implementation were learned from them.
 
 More Information
 ----------------
