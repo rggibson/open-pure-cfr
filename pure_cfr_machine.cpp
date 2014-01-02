@@ -259,6 +259,8 @@ int PureCfrMachine::generate_hand( hand_t &hand, rng_state_t &rng )
   int ranks[ MAX_PURE_CFR_PLAYERS ];
   int top_rank = -1;
   int num_ties = 1;;
+  /* State must be in the final round for rankHand to work properly */
+  state.round = ag.game->numRounds - 1;
   for( int p = 0; p < ag.game->numPlayers; ++p ) {
     ranks[ p ] = rankHand( ag.game, &state, p );
     if( ranks[ p ] > top_rank ) {
