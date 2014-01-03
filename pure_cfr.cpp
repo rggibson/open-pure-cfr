@@ -238,7 +238,7 @@ void run_iterations( Parameters &params, PureCfrMachine &pcm )
 		 "%lg i/s recent\n",
 		 ( intmax_t ) iterations_complete, overall_speed, recent_speed );
       } else {
-	fprintf( stderr, "%jd iterations complete; %lg i/s overal\n",
+	fprintf( stderr, "%jd iterations complete; %lg i/s overall\n",
 		 ( intmax_t ) iterations_complete, overall_speed );
       }
       char temp[ 100 ];
