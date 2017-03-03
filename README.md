@@ -6,7 +6,7 @@ Pure CFR is a time and memory-efficient variant of the [Counterfactual Regret Mi
 About this Implementation
 -------------------------
 
-This implementation of Pure CFR computes poker strategies that are playable in the [Annual Computer Poker Competition (ACPC)](http://www.computerpokercompetition.org).  In addition to games played at the ACPC, this implementation can also be run on any game that can be defined under the [project_acpc_server framework](http://www.computerpokercompetition.org/downloads/code/competition_server/project_acpc_server_v1.0.33.tar.bz2).  The code runs on both Linux and Windows under [Cygwin](http://www.cygwin.com/).  The code has not been tested on a Mac, but feel free to give Mac a shot if you are feeling adventurous. 
+This implementation of Pure CFR computes poker strategies that are playable in the [Annual Computer Poker Competition (ACPC)](http://www.computerpokercompetition.org).  In addition to games played at the ACPC, this implementation can also be run on any game that can be defined under the [project_acpc_server framework](http://www.computerpokercompetition.org/downloads/code/competition_server/project_acpc_server_v1.0.41.tar.bz2).  The code runs on both Linux and Windows under [Cygwin](http://www.cygwin.com/).  The code has not been tested on a Mac, but feel free to give Mac a shot if you are feeling adventurous. 
 
 Installing
 ----------
@@ -16,11 +16,11 @@ First, you must have both `make` and `gcc-g++` installed on your machine.  Then,
 `pure_cfr`
 ----------
 
-This is the main program that generates strategies for games specified under the [project_acpc_server framework](http://www.computerpokercompetition.org/downloads/code/competition_server/project_acpc_server_v1.0.33.tar.bz2).  Sets of three files are generated during the run, a `.regrets`, `.avg-strategy`, and `.player` file.  Run `./pure_cfr` with no additional arguments to display the usage information.  We will now describe in detail each of the required and optional arguments before providing some examples of how to run `pure_cfr` on a variety of games.
+This is the main program that generates strategies for games specified under the [project_acpc_server framework](http://www.computerpokercompetition.org/downloads/code/competition_server/project_acpc_server_v1.0.41.tar.bz2).  Sets of three files are generated during the run, a `.regrets`, `.avg-strategy`, and `.player` file.  Run `./pure_cfr` with no additional arguments to display the usage information.  We will now describe in detail each of the required and optional arguments before providing some examples of how to run `pure_cfr` on a variety of games.
 
 ###Command-line Arguments
 
-`pure_cfr` requires two arguments.  The first argument must be a file that defines the game to be played.  The games provided by the [project_acpc_server code](http://www.computerpokercompetition.org/downloads/code/competition_server/project_acpc_server_v1.0.33.tar.bz2) can be found in the `games/` subdirectory, along with a definition for [Kuhn Poker](http://en.wikipedia.org/wiki/Kuhn_poker).  The second argument is a prefix that specifies where and what name the output files will be and have respectively.  
+`pure_cfr` requires two arguments.  The first argument must be a file that defines the game to be played.  The games provided by the [project_acpc_server code](http://www.computerpokercompetition.org/downloads/code/competition_server/project_acpc_server_v1.0.41.tar.bz2) can be found in the `games/` subdirectory, along with a definition for [Kuhn Poker](http://en.wikipedia.org/wiki/Kuhn_poker).  The second argument is a prefix that specifies where and what name the output files will be and have respectively.  
 
 After these two arguments are specified, a number of different options can be selected:
   * `--config=<file>` - Overwrites the two required arguments and the default options through values specified in `file`.  See `parameters.cpp::read_params( )` for details on how to format this file.
